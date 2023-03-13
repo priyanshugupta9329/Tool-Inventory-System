@@ -1,7 +1,7 @@
 package in.thoughtclan.ToolInventory.controllers;
 
 import in.thoughtclan.ToolInventory.models.User;
-import in.thoughtclan.ToolInventory.repositories.UserRepository;
+import in.thoughtclan.ToolInventory.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +14,12 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepo;
+    private UserService userService;
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
 
-        List<User> user = userRepo.findAll();
+        List<User> user = userService.findAll();
         if (user.size() > 0) {
             return new ResponseEntity<List<User>>(user, HttpStatus.OK);
         } else {
@@ -31,13 +31,13 @@ public class UserController {
     @PostMapping("/user")
     public ResponseEntity<?> createUser(@RequestBody User user){
         try{
-            String id = user.getUser_id();
-            Optional<User> userOptional = userRepo.findById(id);
+            int id = user.getUser_id();
+            Optional<User> userOptional = userService.findById(id);
             if(userOptional.isPresent()){
 
                 return new ResponseEntity<>("Already available with same id " + id, HttpStatus.NOT_FOUND);
             }
-            userRepo.save(user);
+            userService.save(user);
             return new ResponseEntity<User>(user, HttpStatus.OK);
         }
         catch(Exception e){
@@ -47,8 +47,8 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<?> getSingleUser(@PathVariable("id") String id){
-        Optional<User> userOptional = userRepo.findById(id);
+    public ResponseEntity<?> getSingleUser(@PathVariable("id") int id){
+        Optional<User> userOptional = userService.findById(id);
         if(userOptional.isPresent()){
             return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
         }
@@ -58,16 +58,17 @@ public class UserController {
     }
 
     @PutMapping("/user/{id}")
-    public ResponseEntity<?> UpdateById(@PathVariable("id") String id, @RequestBody User user){
+    public ResponseEntity<?> UpdateById(@PathVariable("id") int id, @RequestBody User user){
 
-        Optional<User> userOptional = userRepo.findById(id);
+        Optional<User> userOptional = userService.findById(id);
         if(userOptional.isPresent()){
             User usertosave = userOptional.get();
             usertosave.setUser_name(user.getUser_name() != null ? user.getUser_name() : usertosave.getUser_name());
             usertosave.setUser_password(user.getUser_password() != null ? user.getUser_password() : usertosave.getUser_password());
-            usertosave.setMachine_id(user.getMachine_id() != null ? user.getMachine_id() : usertosave.getMachine_id());
+            usertosave.setMachine_id(user.getMachine_id() != 0 ? user.getMachine_id() : usertosave.getMachine_id());
+            usertosave.setUser_role(user.getUser_role() != null ? user.getUser_role() : usertosave.getUser_role());
 
-            userRepo.save(usertosave);
+            userService.save(usertosave);
             return new ResponseEntity<>(usertosave, HttpStatus.OK);
         }
         else{
@@ -76,10 +77,10 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable("id") String id){
+    public ResponseEntity<?> deleteById(@PathVariable("id") int id){
 
         try{
-            userRepo.deleteById(id);
+            userService.deleteById(id);
             return new ResponseEntity<>("Successfully deleted id " + id, HttpStatus.OK);
         }
         catch(Exception e){

@@ -8,9 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+// import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 
 @Data
 @NoArgsConstructor
@@ -18,15 +17,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "User")
 public class User {
 
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-
+    // @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    private String  user_id;
+    private int user_id;
 
     private String user_name;
 
     private String user_password;
 
-    private String machine_id;
+    private int machine_id;
 
+    private String user_role;
 }
