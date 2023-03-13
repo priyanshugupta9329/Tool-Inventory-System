@@ -16,7 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/getuser")
     public ResponseEntity<?> getAllUsers() {
 
         List<User> user = userService.findAll();
@@ -28,7 +28,7 @@ public class UserController {
 
     }
 
-    @PostMapping("/user")
+    @PostMapping("/postuser")
     public ResponseEntity<?> createUser(@RequestBody User user){
         try{
             int id = user.getUser_id();
@@ -46,7 +46,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/getuser/{id}")
     public ResponseEntity<?> getSingleUser(@PathVariable("id") int id){
         Optional<User> userOptional = userService.findById(id);
         if(userOptional.isPresent()){
@@ -57,7 +57,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/putuser/{id}")
     public ResponseEntity<?> UpdateById(@PathVariable("id") int id, @RequestBody User user){
 
         Optional<User> userOptional = userService.findById(id);
@@ -76,7 +76,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/deleteuser/{id}")
     public ResponseEntity<?> deleteById(@PathVariable("id") int id){
 
         try{
